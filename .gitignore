@@ -22,3 +22,6 @@ __pycache__/
 *.pyc
 # AI / ML Dataset
 backend/fabric_ai/dataset/
+# Large AI model files
+backend/ai/models/*.keras
+backend/fabric_ai/*.keras
