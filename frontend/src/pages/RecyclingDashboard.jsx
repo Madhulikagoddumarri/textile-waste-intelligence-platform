@@ -97,28 +97,15 @@ const RecyclingFacilityDashboard = () => {
         params.append('date_to', `${dateFilter}T23:59:59`);
       }
 
-      const response = await api.get('/api/recycling/dashboard', {
+      const data = await api.get('/api/recycling/dashboard', {
        params: Object.fromEntries(params.entries()),
        headers: {
          Authorization: `Bearer ${token}`,
        },
       });
 
-      // Handle different status codes
-      if (response.status === 401) {
-        navigate('/login');
-        throw new Error('Session expired. Please login again.');
-      }
-      if (response.status === 403) {
-        throw new Error('You are not authorized to access the recycling dashboard');
-      }
-      if (response.status === 404) {
-        throw new Error('Recycling dashboard API endpoint not found');
-      }
-      
 
-      // Parse response as JSON
-      const data = response.data;
+      
 
       setDashboardData(data);
       setError(null);
