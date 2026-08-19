@@ -11,3 +11,4 @@ openpyxl==3.1.2
 reportlab==4.0.0
 numpy
 tensorflow
+opencv-python-headless

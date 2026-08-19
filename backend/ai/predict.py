@@ -3,7 +3,6 @@ import numpy as np
 import tensorflow as tf
 from PIL import Image
 
-# Model path
 MODEL_PATH = os.path.join(
     os.path.dirname(__file__),
     "models",
@@ -12,7 +11,6 @@ MODEL_PATH = os.path.join(
 
 CLASS_NAMES = ["Defect", "NoDefect"]
 
-# Model is NOT loaded when the application starts
 model = None
 
 
@@ -20,30 +18,24 @@ def get_model():
     global model
 
     if model is None:
-        print("Loading fabric defect model...")
         model = tf.keras.models.load_model(MODEL_PATH)
-        print("Fabric defect model loaded successfully.")
 
     return model
 
 
 def predict_image(image_path):
 
-    # Load model only when prediction is requested
-    current_model = get_model()
+    model = get_model()
 
     img = Image.open(image_path).convert("RGB")
-
     img = img.resize((224, 224))
 
-    img = np.array(img) / 255.0
-
+    img = np.array(img, dtype=np.float32) / 255.0
     img = np.expand_dims(img, axis=0)
 
-    prediction = current_model.predict(img, verbose=0)
+    prediction = model.predict(img, verbose=0)
 
     predicted_class = CLASS_NAMES[np.argmax(prediction)]
-
     confidence = float(np.max(prediction))
 
     return {
