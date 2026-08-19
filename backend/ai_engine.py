@@ -79,8 +79,13 @@ def analyze_textile_image(image_base64: str) -> dict:
     cv2.imwrite(temp_path, image)
 
     # Run TensorFlow prediction
-    result = predict_image(temp_path)
     fabric_result = predict_fabric(temp_path)
+
+    # Temporarily disable the large defect model on Render Free
+    result = {
+         "prediction": "NoDefect",
+         "confidence": 100.0
+    }
     print("================================")
     print("IMAGE RECEIVED FROM WEBSITE:", temp_path)
     print("FABRIC RESULT:", fabric_result)
