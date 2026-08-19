@@ -1,12 +1,38 @@
 import os
+
+# Force TensorFlow to use CPU on Render
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+
 import numpy as np
 import tensorflow as tf
+
+# Hide GPU devices so TensorFlow uses CPU
+try:
+    tf.config.set_visible_devices([], "GPU")
+except Exception:
+    pass
+
 from tensorflow.keras.preprocessing import image
 from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
 
 # Load model
-MODEL_PATH = os.path.join(os.path.dirname(__file__), "fabric_model.keras")
-model = tf.keras.models.load_model(MODEL_PATH)
+MODEL_PATH = os.path.join(
+    os.path.dirname(__file__),
+    "fabric_model.keras"
+)
+
+model = None
+
+
+def get_model():
+    global model
+
+    if model is None:
+        print("Loading fabric classification model...")
+        model = tf.keras.models.load_model(MODEL_PATH)
+        print("Fabric classification model loaded.")
+
+    return model
 
 # Class names
 class_names = [
@@ -20,6 +46,7 @@ class_names = [
 
 
 def predict_fabric(image_path):
+    model = get_model()
     img = image.load_img(image_path, target_size=(224, 224))
     img_array = image.img_to_array(img)
     img_array = np.expand_dims(img_array, axis=0)

@@ -1,4 +1,9 @@
+
 import os
+
+# Force TensorFlow to use CPU on Render
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+
 import tempfile
 from ai.predict import predict_image
 from fabric_ai.predict_fabric import predict_fabric
