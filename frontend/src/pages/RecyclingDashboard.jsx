@@ -45,6 +45,7 @@ import Modal from '../components/Modal.jsx';
 import { CONDITION_STYLES, STATUS_STYLES, ROLES, FABRIC_TYPES } from '../constants';
 import { useAuth } from '../hooks/useAuth';
 import { useDebounce } from '../hooks/useDebounce';
+import api from '../services/api';
 
 const MONTH_LABELS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const COLORS = ['#1F7A54', '#2563EB', '#D97706', '#7C3AED', '#EC4899', '#06B6D4', '#10B981', '#F59E0B'];
@@ -96,11 +97,11 @@ const RecyclingFacilityDashboard = () => {
         params.append('date_to', `${dateFilter}T23:59:59`);
       }
 
-      const response = await fetch(`/api/recycling/dashboard?${params.toString()}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
+      const response = await api.get('/api/recycling/dashboard', {
+       params: Object.fromEntries(params.entries()),
+       headers: {
+         Authorization: `Bearer ${token}`,
+       },
       });
 
       // Handle different status codes
@@ -114,19 +115,10 @@ const RecyclingFacilityDashboard = () => {
       if (response.status === 404) {
         throw new Error('Recycling dashboard API endpoint not found');
       }
-      if (!response.ok) {
-        throw new Error(`Server error: ${response.status}`);
-      }
+      
 
       // Parse response as JSON
-      const text = await response.text();
-      let data;
-      try {
-        data = JSON.parse(text);
-      } catch (parseErr) {
-        console.error('Invalid JSON response:', text);
-        throw new Error('Server returned invalid response. Ensure backend is running on http://127.0.0.1:8000');
-      }
+      const data = response.data;
 
       setDashboardData(data);
       setError(null);
